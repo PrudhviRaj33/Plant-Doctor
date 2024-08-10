@@ -16,6 +16,5 @@ sacrebleu
 sentence-transformers
 accelerate 
 gTTS
-streamlit-extras
 pickle
 Python-IO
