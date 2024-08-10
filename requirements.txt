@@ -18,3 +18,5 @@ sentence-transformers
 accelerate 
 gTTS
 Python-IO
+streamlit-extras
+
