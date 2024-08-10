@@ -1,3 +1,4 @@
+--upgrade pip
 PyPDF2
 groq
 langchain-groq
