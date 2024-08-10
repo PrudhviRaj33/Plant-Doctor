@@ -16,5 +16,4 @@ sacrebleu
 sentence-transformers
 accelerate 
 gTTS
-pickle
 Python-IO
