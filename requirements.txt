@@ -5,6 +5,7 @@ langchain
 faiss-cpu
 streamlit
 python-dotenv
+SpeechRecognition
 langchain_community
 pypdf
 langchain_google_genai
