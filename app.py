@@ -186,35 +186,35 @@ def display_history():
 
 # User input form
 col1, col2 = st.columns([0.5, 5.5])
-with col1:
-    recognizer = sr.Recognizer()
-    with stylable_container(key="🎙️",css_styles=[
-            """button 
-            {
-            color:#fff;
-            border-radius: 50%;
-            width : 10px;
-            height: 10px;
-            margin-top : 15px;
-            }
-            """,
-        ]
-        ):
-            if st.button("🎙️", key="custom-speech-button"):
-                    with sr.Microphone() as source:
-                        st.write("Listening...")
-                        audio = recognizer.listen(source)
-                        st.write("Processing...")
-                        try:
-                            user_input = recognizer.recognize_google(audio)
-                            st.write(f"**You said:** {user_input}")
-                            st.session_state.speech_input = user_input
-                        except sr.UnknownValueError:
-                            st.write("Sorry, I did not understand the audio.")
-                            st.session_state.speech_input = ""
-                        except sr.RequestError:
-                            st.write("Sorry, there was an error with the request.")
-                            st.session_state.speech_input = ""
+# with col1:
+#     recognizer = sr.Recognizer()
+#     with stylable_container(key="🎙️",css_styles=[
+#             """button 
+#             {
+#             color:#fff;
+#             border-radius: 50%;
+#             width : 10px;
+#             height: 10px;
+#             margin-top : 15px;
+#             }
+#             """,
+#         ]
+#         ):
+#             if st.button("🎙️", key="custom-speech-button"):
+#                     with sr.Microphone() as source:
+#                         st.write("Listening...")
+#                         audio = recognizer.listen(source)
+#                         st.write("Processing...")
+#                         try:
+#                             user_input = recognizer.recognize_google(audio)
+#                             st.write(f"**You said:** {user_input}")
+#                             st.session_state.speech_input = user_input
+#                         except sr.UnknownValueError:
+#                             st.write("Sorry, I did not understand the audio.")
+#                             st.session_state.speech_input = ""
+#                         except sr.RequestError:
+#                             st.write("Sorry, there was an error with the request.")
+#                             st.session_state.speech_input = ""
 with col2:
     form_container = st.container()
     with form_container:
