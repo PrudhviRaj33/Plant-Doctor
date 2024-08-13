@@ -159,10 +159,13 @@ def display_history():
     with history_container:
         st.write("")  # Force refresh
         for entry in st.session_state.history:
-            st.markdown(f"<p style='font-size: 20px; font-weight: bold;'>👨 User: {entry['input']}</p>", unsafe_allow_html=True)
+            # st.markdown(f"<p style='font-size: 20px; font-weight: bold;'>👨 User: {entry['input']}</p>", unsafe_allow_html=True)
+            with st.chat_message("human"):
+                st.write(entry['input'])
             entry['response'] = entry['response'].lstrip('# ')
-            st.write(f"**🤖 Bot:** {entry['response']}")
-
+            with st.chat_message("assistant"):
+                st.write(entry['response'])
+            # st.write(f"**🤖 Bot:** {entry['response']}")
 # display_history()
 
 # Speech input button
@@ -215,65 +218,64 @@ col1, col2 = st.columns([0.5, 5.5])
 #                         except sr.RequestError:
 #                             st.write("Sorry, there was an error with the request.")
 #                             st.session_state.speech_input = ""
-with col2:
-    form_container = st.container()
-    with form_container:
-        form_submitted = False  # Flag to track form submission
-        with st.form(key='chat_form', clear_on_submit=True):
-            co1, co2 = st.columns([3,1]) 
-            with co1:
-                user_input = st.text_input("Enter Your Question", value=st.session_state.speech_input if 'speech_input' in st.session_state else "",label_visibility="collapsed")
-            with co2:
-                with stylable_container(key="⬆", css_styles=[
-                """button 
-                {
-                position: absolute;
-                right: 10px;
-                top: 5px;
-                border-radius: 50%;
-                width : 10px;
-                height: 10px;
-                margin-button : 100px;
-                }
-                """,
+form_container = st.container()
+with form_container:
+    form_submitted = False  # Flag to track form submission
+    with st.form(key='chat_form', clear_on_submit=True):
+        co1, co2 = st.columns([3,1]) 
+        with co1:
+            user_input = st.text_input("Enter Your Question", value=st.session_state.speech_input if 'speech_input' in st.session_state else "",label_visibility="collapsed")
+        with co2:
+            with stylable_container(key="⬆", css_styles=[
+            """button 
+            {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            border-radius: 50%;
+            width : 10px;
+            height: 10px;
+            margin-button : 100px;
+            }
+            """,
             ]):
-                    submit_button = st.form_submit_button("⬆")
+                submit_button = st.form_submit_button("⬆")
 
-            if submit_button and not form_submitted:
-                form_submitted = True  # Set flag to prevent re-processing
+        if submit_button and not form_submitted:
+            form_submitted = True  # Set flag to prevent re-processing
             
-                if "vectors" in st.session_state:
-                    document_chain = create_stuff_documents_chain(llm, prompt)
-                    retriever = st.session_state.vectors.as_retriever()
-                    retrieval_chain = create_retrieval_chain(retriever, document_chain)
+            if "vectors" in st.session_state:
+                document_chain = create_stuff_documents_chain(llm, prompt)
+                retriever = st.session_state.vectors.as_retriever()
+                retrieval_chain = create_retrieval_chain(retriever, document_chain)
                 
-                    start = time.process_time()
-                    response = retrieval_chain.invoke({'input': user_input})
-                    response_text = response["answer"]
-                    response_time = time.process_time() - start
+                start = time.process_time()
+                response = retrieval_chain.invoke({'input': user_input})
+                response_text = response["answer"]
+                response_time = time.process_time() - start
                 
                 # Check for duplicate entries before adding to history
-                    if all(entry['input'] != user_input for entry in st.session_state.history):
-                        st.session_state.history.append({"input": user_input, "response": response_text})
+                if all(entry['input'] != user_input for entry in st.session_state.history):
+                    st.session_state.history.append({"input": user_input, "response": response_text})
                 
                 # Clear speech input after processing
-                    st.session_state.speech_input = ""
+                st.session_state.speech_input = ""
                 
                 # Refresh the conversation history display
-                    display_history()
+                display_history()
 
                 # Display response time
                     # st.write(f"Response time: {response_time:.2f} seconds")
-                    st.write("")
-                    st.write("")
-                    response_text = response_text.lstrip('# ')
+                st.write("")
+                st.write("")
+                response_text = response_text.lstrip('# ')
                 
                 # Convert text response to speech
-                    tts = gTTS(text=response_text, lang='en')
-                    audio_bytes = BytesIO()
-                    tts.write_to_fp(audio_bytes)
-                    audio_bytes.seek(0)
+                tts = gTTS(text=response_text, lang='en')
+                audio_bytes = BytesIO()
+                tts.write_to_fp(audio_bytes)
+                audio_bytes.seek(0)
                 
-                    st.audio(audio_bytes, format="audio/mp3")
-                else:
-                    st.write("Vector Store DB not loaded. Please ensure the FAISS index file exists and try again.")
+                st.audio(audio_bytes, format="audio/mp3")
+            else:
+                st.write("Vector Store DB not loaded. Please ensure the FAISS index file exists and try again.")
