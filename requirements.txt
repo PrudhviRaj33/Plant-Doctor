@@ -19,5 +19,3 @@ accelerate
 gTTS
 Python-IO
 streamlit-extras
-PyAudio
-
